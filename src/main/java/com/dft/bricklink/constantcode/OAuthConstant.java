@@ -1,7 +1,6 @@
 package com.dft.bricklink.constantcode;
 
 public class OAuthConstant {
-
     public static final String TIMESTAMP = "oauth_timestamp";
     public static final String SIGN_METHOD = "oauth_signature_method";
     public static final String SIGNATURE = "oauth_signature";
