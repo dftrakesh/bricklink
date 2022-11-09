@@ -9,6 +9,15 @@ public interface ConstantCode {
     String CATELOG_ITEM_PRICE = "/price";
     String CATELOG_ITEM_COLOR = "/colors";
 
+    String ORDER = "/orders";
+    String ORDER_ITEM = "/items";
+
     String INVENTORY = "/inventories";
+
+    String CATEGORY = "/categories";
+
+    String COLOR = "/colors";
+
+    String ITEM_MAPPING = "/item_mapping";
 
 }
