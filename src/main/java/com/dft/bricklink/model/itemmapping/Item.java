@@ -1,4 +1,4 @@
-package com.dft.bricklink.model.order;
+package com.dft.bricklink.model.itemmapping;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -8,14 +8,7 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class Address {
-    private Name name;
-    private String full;
-    private String address1;
-    private String address2;
-    private String countryCode;
-    private String city;
-    private String state;
-    private String postalCode;
-    private String phoneNumber;
+public class Item {
+    private String no;
+    private String type;
 }

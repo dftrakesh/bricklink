@@ -1,21 +1,16 @@
-package com.dft.bricklink.model.order;
+package com.dft.bricklink.model.catalogitem;
 
+import com.dft.bricklink.model.common.DataInterface;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
+import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class Address {
-    private Name name;
-    private String full;
-    private String address1;
-    private String address2;
-    private String countryCode;
-    private String city;
-    private String state;
-    private String postalCode;
-    private String phoneNumber;
+public class SubsetEntries implements DataInterface {
+	private Integer matchNo;
+	private List<SubsetEntry> entries;
 }

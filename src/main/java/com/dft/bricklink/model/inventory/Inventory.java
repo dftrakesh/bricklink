@@ -1,5 +1,6 @@
 package com.dft.bricklink.model.inventory;
 
+import com.dft.bricklink.model.common.DataInterface;
 import com.dft.bricklink.model.common.DateDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class Inventory {
+public class Inventory implements DataInterface {
     private Integer inventoryId;
     private Item item;
     private Integer colorId;
