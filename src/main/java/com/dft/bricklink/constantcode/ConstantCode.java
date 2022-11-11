@@ -20,4 +20,7 @@ public interface ConstantCode {
 
     String ITEM_MAPPING = "/item_mapping";
 
+
+    int MAX_ATTEMPTS = 50;
+    int TIME_OUT_DURATION = 1000;
 }
