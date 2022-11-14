@@ -4,6 +4,7 @@ import com.dft.bricklink.auth.BLAuthSigner;
 import com.dft.bricklink.model.AccessCredentials;
 import com.dft.bricklink.model.common.Method;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -12,7 +13,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import static com.dft.bricklink.constantcode.ConstantCode.API_BASE_URL;
+import static com.dft.bricklink.constantcode.ConstantCode.MAX_ATTEMPTS;
+import static com.dft.bricklink.constantcode.ConstantCode.TIME_OUT_DURATION;
 
 @Log4j2
 public class BrickLinkSDK {
@@ -54,20 +58,16 @@ public class BrickLinkSDK {
         return jsonResponse;
     }
 
-    private String sendRequest(Method method, String url){
+    private String sendRequest(Method method, String url) {
         HttpRequest request = HttpRequest.newBuilder()
                                          .uri(URI.create(url))
                                          .method(method.name(), HttpRequest.BodyPublishers.noBody())
                                          .build();
 
-        String responseBody = null;
-        try {
-            responseBody = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
-                                 .body();
-        } catch (Exception exception) {
-            log.error("Exception while send API request. Error Message: {}", exception.getMessage(), exception);
-        }
-        return responseBody;
+        HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers
+                                                               .ofString(StandardCharsets.UTF_8);
+
+        return getRequestWrapped(request, handler);
     }
 
     private Map<String, String> encodeParameters(Method method, String url, Map<String, String> parameters) {
@@ -107,5 +107,29 @@ public class BrickLinkSDK {
         }
 
         return finalUrl;
+    }
+
+    @SneakyThrows
+    private <T> T getRequestWrapped(HttpRequest request, HttpResponse.BodyHandler<T> handler) {
+
+        return client.sendAsync(request, handler)
+                     .thenComposeAsync(response -> tryResend(client, request, handler, response, 1))
+                     .get()
+                     .body();
+    }
+
+    @SneakyThrows
+    private <T> CompletableFuture<HttpResponse<T>> tryResend(HttpClient client,
+                                                             HttpRequest request,
+                                                             HttpResponse.BodyHandler<T> handler,
+                                                             HttpResponse<T> resp,
+                                                             int count) {
+
+        if (resp.statusCode() == 503 && count < MAX_ATTEMPTS) {
+            Thread.sleep(TIME_OUT_DURATION);
+            return client.sendAsync(request, handler)
+                         .thenComposeAsync(response -> tryResend(client, request, handler, response, count + 1));
+        }
+        return CompletableFuture.completedFuture(resp);
     }
 }
