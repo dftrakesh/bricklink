@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.dft.bricklink</groupId>
     <artifactId>bricklink</artifactId>
     <version>0.0.1</version>
+    <packaging>jar</packaging>
 
     <name>bricklink</name>
-    <description>bricklink API using JDK 11</description>
+    <description>Bricklink API using JDK 11</description>
     <url>https://github.com/dftrakesh/bricklink</url>
 
     <licenses>
@@ -38,6 +40,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <version.plugin.maven-release-plugin>2.5.2</version.plugin.maven-release-plugin>
         <version.plugin.nexus-staging-maven-plugin>1.6.5</version.plugin.nexus-staging-maven-plugin>
+        <version.plugin.maven-gpg-plugin>1.6</version.plugin.maven-gpg-plugin>
         <source.encoding>UTF-8</source.encoding>
     </properties>
 
