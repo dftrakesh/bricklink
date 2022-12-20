@@ -15,6 +15,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import static com.dft.bricklink.constantcode.ConstantCode.API_BASE_URL;
+import static com.dft.bricklink.constantcode.ConstantCode.HTTP_HEADER_CONTENT_TYPE_VALUE;
+import static com.dft.bricklink.constantcode.ConstantCode.HTTP_HEADER_KEY_CONTENT_TYPE;
 import static com.dft.bricklink.constantcode.ConstantCode.MAX_ATTEMPTS;
 import static com.dft.bricklink.constantcode.ConstantCode.TIME_OUT_DURATION;
 
@@ -26,6 +28,7 @@ public class BrickLinkSDK {
     private final String tokenValue;
     private final String tokenSecret;
     private final HttpClient client;
+    private final ObjectMapper objectMapper;
 
     public BrickLinkSDK(AccessCredentials accessCredentials) {
         this.consumerKey = accessCredentials.getConsumerKey();
@@ -33,13 +36,14 @@ public class BrickLinkSDK {
         this.tokenValue = accessCredentials.getTokenValue();
         this.tokenSecret = accessCredentials.getTokenSecret();
         this.client = HttpClient.newHttpClient();
+        this.objectMapper = new ObjectMapper();
     }
 
     public String getJsonResponse(Method method, String uri) {
-        return getJsonResponse(method, uri, null);
+        return getJsonResponse(method, uri, null, null);
     }
 
-    public String getJsonResponse(Method method, String uri, Map<String, String> parameters) {
+    public String getJsonResponse(Method method, String uri, Map<String, String> parameters, String body) {
         String baseUrl = API_BASE_URL + uri;
 
         if (parameters != null) {
@@ -51,17 +55,20 @@ public class BrickLinkSDK {
         String encodedUrl = buildUrl(method, baseUrl, parameters);
         String jsonResponse = null;
         try {
-            jsonResponse = sendRequest(method, encodedUrl);
+            jsonResponse = sendRequest(method, encodedUrl, body);
         } catch (Exception exception) {
             log.error("Exception while callRestService method. Error Message: {}", exception.getMessage(), exception);
         }
         return jsonResponse;
     }
 
-    private String sendRequest(Method method, String url) {
+    private String sendRequest(Method method, String url, String body) {
+        HttpRequest.BodyPublisher bodyPublisher = body == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
+
         HttpRequest request = HttpRequest.newBuilder()
                                          .uri(URI.create(url))
-                                         .method(method.name(), HttpRequest.BodyPublishers.noBody())
+                                         .header(HTTP_HEADER_KEY_CONTENT_TYPE, HTTP_HEADER_CONTENT_TYPE_VALUE)
+                                         .method(method.name(), bodyPublisher)
                                          .build();
 
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers
@@ -131,5 +138,10 @@ public class BrickLinkSDK {
                          .thenComposeAsync(response -> tryResend(client, request, handler, response, count + 1));
         }
         return CompletableFuture.completedFuture(resp);
+    }
+
+    @SneakyThrows
+    protected String getString(Object body) {
+        return objectMapper.writeValueAsString(body);
     }
 }

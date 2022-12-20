@@ -34,4 +34,13 @@ public class BrickLinkInventory extends BrickLinkSDK {
         return inventory;
     }
 
+    public Inventory updateInventory(Inventory inventory) {
+        Integer iInventory = inventory.getInventoryId();
+        String uri = INVENTORY + "/" + iInventory;
+
+        String jsonResponse = getJsonResponse(Method.PUT, uri, null, getString(inventory));
+
+        return handleJsonBody(jsonResponse, new TypeReference<>() {
+        });
+    }
 }
