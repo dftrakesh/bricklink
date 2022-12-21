@@ -19,8 +19,11 @@ public interface ConstantCode {
     String COLOR = "/colors";
 
     String ITEM_MAPPING = "/item_mapping";
-
+    String NOTIFICATIONS = "/notifications";
 
     int MAX_ATTEMPTS = 50;
     int TIME_OUT_DURATION = 1000;
+
+    String HTTP_HEADER_KEY_CONTENT_TYPE = "content-type";
+    String HTTP_HEADER_CONTENT_TYPE_VALUE = "application/json";
 }
